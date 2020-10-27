@@ -182,8 +182,10 @@ int main() {
 
     // load textures
     // -------------
-    unsigned int cubeTexture = loadTexture(std::filesystem::path("resources/textures/container.jpg").c_str());
-    unsigned int floorTexture = loadTexture(std::filesystem::path("resources/textures/metal.png").c_str());
+    unsigned int cubeTexture = loadTexture(
+            std::filesystem::path("resources/textures/container.jpg").c_str());
+    unsigned int floorTexture = loadTexture(
+            std::filesystem::path("resources/textures/metal.png").c_str());
 
     // shader configuration
     // --------------------
@@ -197,6 +199,9 @@ int main() {
     // -------------------------
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
+    // bind it as the active framebuffer,
+    // By binding to the GL_FRAMEBUFFER target all the next read and write framebuffer operations
+    // will affect the currently bound framebuffer.
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     // create a color attachment texture
     unsigned int textureColorbuffer;
@@ -207,11 +212,14 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
     // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    // An attachment is a memory location that can act as a buffer for the framebuffer, think of it as an image.
+    // When creating an attachment we have two options to take: textures or renderbuffer objects.
     unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH,
-                          SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH,SCR_HEIGHT);
+    // use a single renderbuffer object for both a depth AND stencil buffer.
+
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
                               rbo); // now actually attach it
     // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
