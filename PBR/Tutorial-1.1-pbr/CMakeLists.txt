@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(ssao)
+project(pbr1)
 
 set(CMAKE_CXX_STANDARD 20)
 SET(MAIN_TARGET ${PROJECT_NAME})
@@ -44,7 +44,7 @@ message("-- Libraries: " ${LIBRARIES})
 message("-- CMAKE_SOURCE_DIR " ${CMAKE_SOURCE_DIR})
 message("-- CMAKE_COMMAND " ${CMAKE_COMMAND})
 
-add_executable(ssao main.cpp ${SOURCE_FILES})
+add_executable(pbr1 main.cpp ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
 
 add_custom_command(TARGET ${MAIN_TARGET}
