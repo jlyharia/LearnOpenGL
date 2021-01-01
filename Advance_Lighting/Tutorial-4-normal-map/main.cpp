@@ -70,7 +70,6 @@ int main() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
@@ -189,7 +188,14 @@ void renderQuad() {
         bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
         bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
         bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
+        cout << "tangent1 = ( " << tangent1.x << ", "
+             << tangent1.y << ", "
+             << tangent1.z << ")"
+             << endl;
+        cout << "bitangent1 = ( " << bitangent1.x << ", "
+             << bitangent1.y << ", "
+             << bitangent1.z << ")"
+             << endl;
         // triangle 2
         // ----------
         edge1 = pos3 - pos1;

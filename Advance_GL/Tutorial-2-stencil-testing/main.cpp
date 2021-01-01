@@ -233,13 +233,15 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // 2nd. render pass: now draw slightly scaled versions of the objects, this time disabling stencil writing.
-        // Because the stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are not drawn, thus only drawing
+        // Because the stencil buffer is now filled with several 1s.
+        // The parts of the buffer that are 1 are not drawn, thus only drawing
         // the objects' size differences, making it look like borders.
         // -----------------------------------------------------------------------------------------------------------------------------
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00);
         glDisable(GL_DEPTH_TEST);
         shaderSingleColor.use();
+        // draw outline
         float scale = 1.1;
         // cubes
         glBindVertexArray(cubeVAO);

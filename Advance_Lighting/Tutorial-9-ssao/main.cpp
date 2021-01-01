@@ -146,6 +146,8 @@ int main() {
     // SSAO color buffer
     glGenTextures(1, &ssaoColorBuffer);
     glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    // As the ambient occlusion result is a single grayscale value we'll only need a texture's red component,
+    // so we set the color buffer's internal format to GL_RED.
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -180,6 +182,8 @@ int main() {
         float scale = float(i) / 64.0;
 
         // scale samples s.t. they're more aligned to center of kernel
+        // https://www.febucci.com/2018/08/easing-functions/
+        //  scale * scale is an ease in function
         scale = std::lerp(0.1f, 1.0f, scale * scale);
         sample *= scale;
         ssaoKernel.push_back(sample);
@@ -301,26 +305,26 @@ int main() {
 
         // 4. lighting pass: traditional deferred Blinn-Phong lighting with added screen-space ambient occlusion
         // -----------------------------------------------------------------------------------------------------
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        shaderLightingPass.use();
-        // send light relevant uniforms
-        glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * glm::vec4(lightPos, 1.0));
-        shaderLightingPass.setVec3("light.Position", lightPosView);
-        shaderLightingPass.setVec3("light.Color", lightColor);
-        // Update attenuation parameters
-        const float linear = 0.09;
-        const float quadratic = 0.032;
-        shaderLightingPass.setFloat("light.Linear", linear);
-        shaderLightingPass.setFloat("light.Quadratic", quadratic);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, gPosition);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, gNormal);
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, gAlbedo);
-        glActiveTexture(GL_TEXTURE3); // add extra SSAO texture to lighting pass
-        glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
-        renderQuad();
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // shaderLightingPass.use();
+        // // send light relevant uniforms
+        // glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * glm::vec4(lightPos, 1.0));
+        // shaderLightingPass.setVec3("light.Position", lightPosView);
+        // shaderLightingPass.setVec3("light.Color", lightColor);
+        // // Update attenuation parameters
+        // const float linear = 0.09;
+        // const float quadratic = 0.032;
+        // shaderLightingPass.setFloat("light.Linear", linear);
+        // shaderLightingPass.setFloat("light.Quadratic", quadratic);
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, gPosition);
+        // glActiveTexture(GL_TEXTURE1);
+        // glBindTexture(GL_TEXTURE_2D, gNormal);
+        // glActiveTexture(GL_TEXTURE2);
+        // glBindTexture(GL_TEXTURE_2D, gAlbedo);
+        // glActiveTexture(GL_TEXTURE3); // add extra SSAO texture to lighting pass
+        // glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+        // renderQuad();
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -452,6 +456,10 @@ void processInput(GLFWwindow *window) {
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        camera.ProcessKeyboard(UP, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

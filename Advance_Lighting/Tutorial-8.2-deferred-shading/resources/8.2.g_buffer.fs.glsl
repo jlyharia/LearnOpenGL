@@ -14,6 +14,8 @@ void main()
 {
     // store the fragment position vector in the first gbuffer texture
     gPosition = FragPos;
+    // store depth value in position w
+//    gPosition.w = gl_FragCoord.z;
     // also store the per-fragment normals into the gbuffer
     gNormal = normalize(Normal);
     // and the diffuse per-fragment color
