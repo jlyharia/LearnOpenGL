@@ -7,6 +7,7 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D texNoise;
 
+// random kernel
 uniform vec3 samples[64];
 
 // parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
@@ -22,10 +23,13 @@ uniform mat4 projection;
 void main()
 {
     // get input for SSAO algorithm
+    // frag pos is in view space
     vec3 fragPos = texture(gPosition, TexCoords).xyz;
     vec3 normal = normalize(texture(gNormal, TexCoords).rgb);
+    // glTexParameteri - GL_REPEAT
     vec3 randomVec = normalize(texture(texNoise, TexCoords * noiseScale).xyz);
     // create TBN change-of-basis matrix: from tangent-space to view-space
+    // Gramm-Schmidt process
     vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
     vec3 bitangent = cross(normal, tangent);
     mat3 TBN = mat3(tangent, bitangent, normal);
@@ -44,11 +48,11 @@ void main()
         offset.xyz = offset.xyz * 0.5 + 0.5;// transform to range 0.0 - 1.0
 
         // get sample depth
-        float sampleDepth = texture(gPosition, offset.xy).z;// get depth value of kernel sample
+        float originDepth = texture(gPosition, offset.xy).z;// get depth value of kernel sample
 
         // range check & accumulate
-        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
-        occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;
+        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - originDepth));
+        occlusion += (originDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;
     }
     occlusion = 1.0 - (occlusion / kernelSize);
 

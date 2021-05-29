@@ -20,6 +20,7 @@ void processInput(GLFWwindow *window);
 
 unsigned int loadTexture(const char *path);
 
+void drawCube(Shader &shader, glm::vec3 transVec);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -33,6 +34,8 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+int postProcessMod = 0;
 
 int main() {
     // glfw: initialize and configure
@@ -217,7 +220,7 @@ int main() {
     unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH,SCR_HEIGHT);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
     // use a single renderbuffer object for both a depth AND stencil buffer.
 
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
@@ -265,13 +268,10 @@ int main() {
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, cubeTexture);
-        model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-        shader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        shader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        drawCube(shader, glm::vec3(-1.0f, 0.0f, -1.0f));
+        drawCube(shader, glm::vec3(2.0f, 0.0f, 0.0f));
+        drawCube(shader, glm::vec3(-2.0f, 0.0f, 0.0f));
+        drawCube(shader, glm::vec3(0.0f, 0.0f, 0.0f));
         // floor
         glBindVertexArray(planeVAO);
         glBindTexture(GL_TEXTURE_2D, floorTexture);
@@ -288,6 +288,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         screenShader.use();
+        screenShader.setInt("mod", postProcessMod);
         glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D,
                       textureColorbuffer);    // use the color attachment texture as the texture of the quad plane
@@ -318,7 +319,6 @@ int main() {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -327,6 +327,23 @@ void processInput(GLFWwindow *window) {
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
+        postProcessMod = 0;
+        std::cout << "press 0 \n";
+    }
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+        postProcessMod = 1;
+        std::cout << "press 1 \n";
+    }
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+        postProcessMod = 2;
+        std::cout << "press 2 \n";
+    }
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+        postProcessMod = 3;
+        std::cout << "press 3 \n";
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -394,4 +411,11 @@ unsigned int loadTexture(char const *path) {
     }
 
     return textureID;
+}
+
+void drawCube(Shader &shader, glm::vec3 transVec) {
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, transVec);
+    shader.setMat4("model", model);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }

@@ -5,6 +5,8 @@ in vec2 TexCoords;
 
 uniform sampler2D screenTexture;
 const float offset = 1.0 / 300.0;
+uniform int mod;
+
 vec4 kernel_effects(){
     vec2 offsets[9] = vec2[](
     vec2(-offset, offset), // top-left
@@ -25,13 +27,13 @@ vec4 kernel_effects(){
     );
 
     vec3 sampleTex[9];
-    for (int i = 0; i < 9; i++)
-    {
+    for (int i = 0; i < 9; i++){
         sampleTex[i] = vec3(texture(screenTexture, TexCoords.st + offsets[i]));
     }
     vec3 col = vec3(0.0);
-    for (int i = 0; i < 9; i++)
-    col += sampleTex[i] * kernel[i];
+    for (int i = 0; i < 9; i++){
+        col += sampleTex[i] * kernel[i];
+    }
 
     //    fragColor = vec4(col, 1.0);
     return vec4(col, 1.0);
@@ -39,17 +41,19 @@ vec4 kernel_effects(){
 void main()
 {
     // regular
-    //    vec3 col = texture(screenTexture, TexCoords).rgb;
-    //    FragColor = vec4(col, 1.0);
-
-    // Inversion
-    //    FragColor = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
-
-    // Grayscale
-    //    FragColor = texture(screenTexture, TexCoords);
-    //    float average = 0.2126 * FragColor.r + 0.7152 * FragColor.g + 0.0722 * FragColor.b;
-    //    FragColor = vec4(average, average, average, 1.0);
-
-    // Kernel effects https://learnopengl.com/Advanced-OpenGL/Framebuffers
-    FragColor = kernel_effects();
+    if (mod == 0){
+        vec3 col = texture(screenTexture, TexCoords).rgb;
+        FragColor = vec4(col, 1.0);
+    } else if (mod == 1){
+        // Kernel effects https://learnopengl.com/Advanced-OpenGL/Framebuffers
+        FragColor = kernel_effects();
+    } else if (mod == 2){
+        // Inversion
+        FragColor = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
+    } else if (mod == 3){
+        // Grayscale
+        FragColor = texture(screenTexture, TexCoords);
+        float average = 0.2126 * FragColor.r + 0.7152 * FragColor.g + 0.0722 * FragColor.b;
+        FragColor = vec4(average, average, average, 1.0);
+    }
 }

@@ -305,26 +305,26 @@ int main() {
 
         // 4. lighting pass: traditional deferred Blinn-Phong lighting with added screen-space ambient occlusion
         // -----------------------------------------------------------------------------------------------------
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // shaderLightingPass.use();
-        // // send light relevant uniforms
-        // glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * glm::vec4(lightPos, 1.0));
-        // shaderLightingPass.setVec3("light.Position", lightPosView);
-        // shaderLightingPass.setVec3("light.Color", lightColor);
-        // // Update attenuation parameters
-        // const float linear = 0.09;
-        // const float quadratic = 0.032;
-        // shaderLightingPass.setFloat("light.Linear", linear);
-        // shaderLightingPass.setFloat("light.Quadratic", quadratic);
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, gPosition);
-        // glActiveTexture(GL_TEXTURE1);
-        // glBindTexture(GL_TEXTURE_2D, gNormal);
-        // glActiveTexture(GL_TEXTURE2);
-        // glBindTexture(GL_TEXTURE_2D, gAlbedo);
-        // glActiveTexture(GL_TEXTURE3); // add extra SSAO texture to lighting pass
-        // glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
-        // renderQuad();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shaderLightingPass.use();
+        // send light relevant uniforms
+        glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * glm::vec4(lightPos, 1.0));
+        shaderLightingPass.setVec3("light.Position", lightPosView);
+        shaderLightingPass.setVec3("light.Color", lightColor);
+        // Update attenuation parameters
+        const float linear = 0.09;
+        const float quadratic = 0.032;
+        shaderLightingPass.setFloat("light.Linear", linear);
+        shaderLightingPass.setFloat("light.Quadratic", quadratic);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, gPosition);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gNormal);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gAlbedo);
+        glActiveTexture(GL_TEXTURE3); // add extra SSAO texture to lighting pass
+        glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+        renderQuad();
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
