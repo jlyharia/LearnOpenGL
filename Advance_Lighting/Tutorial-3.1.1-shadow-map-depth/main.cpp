@@ -147,8 +147,8 @@ int main() {
 
     // shader configuration
     // --------------------
-    debugDepthQuad.use();
-    debugDepthQuad.setInt("depthMap", 0);
+    simpleDepthShader.use();
+    simpleDepthShader.setInt("depthMap", 0);
 
     // lighting info
     // -------------
@@ -198,12 +198,12 @@ int main() {
 
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
-        debugDepthQuad.use();
-        debugDepthQuad.setFloat("near_plane", near_plane);
-        debugDepthQuad.setFloat("far_plane", far_plane);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderQuad();
+        // debugDepthQuad.use();
+        // debugDepthQuad.setFloat("near_plane", near_plane);
+        // debugDepthQuad.setFloat("far_plane", far_plane);
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, depthMap);
+        // renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

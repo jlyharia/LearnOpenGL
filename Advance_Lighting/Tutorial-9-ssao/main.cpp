@@ -278,6 +278,7 @@ int main() {
         glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
         glClear(GL_COLOR_BUFFER_BIT);
         shaderSSAO.use();
+        glClear(GL_COLOR_BUFFER_BIT);
         // Send kernel + rotation
         for (unsigned int i = 0; i < 64; ++i)
             shaderSSAO.setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
@@ -294,9 +295,12 @@ int main() {
 
         // 3. blur SSAO texture to remove noise
         // ------------------------------------
+
         glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT);
         shaderSSAOBlur.use();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
         renderQuad();

@@ -18,6 +18,8 @@ const int NR_LIGHTS = 32;
 uniform Light lights[NR_LIGHTS];
 uniform vec3 viewPos;
 
+const float near = 0.1;
+const float far = 10.0;
 void main()
 {
     // retrieve data from gbuffer
@@ -46,4 +48,5 @@ void main()
         lighting += diffuse + specular;
     }
     FragColor = vec4(lighting, 1.0);
+
 }
